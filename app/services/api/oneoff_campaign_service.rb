@@ -6,7 +6,7 @@ class Api::OneoffCampaignService
   DEFAULT_MAX_DELAY = 0
 
   def perform
-    raise "Invalid campaign #{campaign.id}" if campaign.inbox.inbox_type != 'API' || !campaign.one_off?
+    raise "Campaign must be a one-off API inbox campaign" if campaign.inbox.inbox_type != 'API' || !campaign.one_off?
     raise 'Completed Campaign' if campaign.completed?
 
     audience_label_ids = campaign.audience.select { |audience| audience['type'] == 'Label' }.pluck('id')
@@ -37,7 +37,7 @@ class Api::OneoffCampaignService
     Rails.logger.info "[API Campaign #{campaign.id}] Processing #{contacts.count} contacts"
 
     message_count = 0
-    window_start = Time.now
+    window_start = Time.current
 
     contacts.each do |contact|
       window_start, message_count = enforce_rate_limit(window_start, message_count)
@@ -51,9 +51,9 @@ class Api::OneoffCampaignService
     return [window_start, message_count] if rate_limit <= 0
 
     if message_count >= rate_limit
-      elapsed = Time.now - window_start
+      elapsed = Time.current - window_start
       sleep(60 - elapsed) if elapsed < 60
-      window_start = Time.now
+      window_start = Time.current
       message_count = 0
     end
 
