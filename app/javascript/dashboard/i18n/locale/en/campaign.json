@@ -138,6 +138,78 @@
         }
       }
     },
+    "API_CHANNEL": {
+      "HEADER_TITLE": "API campaigns",
+      "NEW_CAMPAIGN": "Create campaign",
+      "EMPTY_STATE": {
+        "TITLE": "No API campaigns are available",
+        "SUBTITLE": "Launch an API campaign to reach your contacts directly. Click 'Create campaign' to get started."
+      },
+      "CARD": {
+        "STATUS": {
+          "PROCESSING": "Processing",
+          "COMPLETED": "Completed",
+          "SCHEDULED": "Scheduled"
+        },
+        "CAMPAIGN_DETAILS": {
+          "SENT_FROM": "Sent from",
+          "ON": "on"
+        }
+      },
+      "CREATE": {
+        "TITLE": "Create API campaign",
+        "FORM": {
+          "TITLE": {
+            "LABEL": "Title",
+            "PLACEHOLDER": "Please enter the title of campaign",
+            "ERROR": "Title is required"
+          },
+          "MESSAGE": {
+            "LABEL": "Message",
+            "PLACEHOLDER": "Please enter the message of campaign",
+            "ERROR": "Message is required"
+          },
+          "INBOX": {
+            "LABEL": "Select Inbox",
+            "PLACEHOLDER": "Select Inbox",
+            "ERROR": "Inbox is required"
+          },
+          "AUDIENCE": {
+            "LABEL": "Audience",
+            "PLACEHOLDER": "Select the customer labels",
+            "ERROR": "Audience is required"
+          },
+          "SCHEDULED_AT": {
+            "LABEL": "Scheduled time",
+            "PLACEHOLDER": "Please select the time",
+            "ERROR": "Scheduled time is required"
+          },
+          "RATE_LIMIT": {
+            "LABEL": "Rate limit (messages per minute)",
+            "PLACEHOLDER": "60",
+            "HELP": "Maximum number of messages to send per minute. Default is 60."
+          },
+          "MIN_DELAY": {
+            "LABEL": "Minimum delay between messages (seconds)",
+            "PLACEHOLDER": "0",
+            "HELP": "Minimum number of seconds to wait between messages."
+          },
+          "MAX_DELAY": {
+            "LABEL": "Maximum delay between messages (seconds)",
+            "PLACEHOLDER": "0",
+            "HELP": "Maximum number of seconds to wait between messages. A random delay between min and max will be applied."
+          },
+          "BUTTONS": {
+            "CREATE": "Create",
+            "CANCEL": "Cancel"
+          },
+          "API": {
+            "SUCCESS_MESSAGE": "API campaign created successfully",
+            "ERROR_MESSAGE": "There was an error. Please try again."
+          }
+        }
+      }
+    },
     "WHATSAPP": {
       "HEADER_TITLE": "WhatsApp campaigns",
       "NEW_CAMPAIGN": "Create campaign",
