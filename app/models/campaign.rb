@@ -3,6 +3,7 @@
 # Table name: campaigns
 #
 #  id                                 :bigint           not null, primary key
+#  additional_attributes                :jsonb            default({})
 #  audience                           :jsonb
 #  campaign_status                    :integer          default("active"), not null
 #  campaign_type                      :integer          default("ongoing"), not null
@@ -85,6 +86,8 @@ class Campaign < ApplicationRecord
       Sms::OneoffSmsCampaignService.new(campaign: self).perform
     when 'Whatsapp'
       Whatsapp::OneoffCampaignService.new(campaign: self).perform
+    when 'Api'
+      Api::OneoffCampaignService.new(campaign: self).perform
     end
   end
 
@@ -95,14 +98,14 @@ class Campaign < ApplicationRecord
   def validate_campaign_inbox
     return unless inbox
 
-    errors.add :inbox, 'Unsupported Inbox type' unless ['Website', 'Twilio SMS', 'Sms', 'Whatsapp'].include? inbox.inbox_type
+    errors.add :inbox, 'Unsupported Inbox type' unless ['Website', 'Twilio SMS', 'Sms', 'Whatsapp', 'Api'].include? inbox.inbox_type
   end
 
   # TO-DO we clean up with better validations when campaigns evolve into more inboxes
   def ensure_correct_campaign_attributes
     return if inbox.blank?
 
-    if ['Twilio SMS', 'Sms', 'Whatsapp'].include?(inbox.inbox_type)
+    if ['Twilio SMS', 'Sms', 'Whatsapp', 'Api'].include?(inbox.inbox_type)
       self.campaign_type = 'one_off'
       self.scheduled_at ||= Time.now.utc
     else
