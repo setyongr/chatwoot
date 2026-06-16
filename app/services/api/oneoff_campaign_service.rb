@@ -2,8 +2,8 @@ class Api::OneoffCampaignService
   pattr_initialize [:campaign!]
 
   def perform
-    raise "Invalid campaign #{campaign.id}" if campaign.inbox.inbox_type != 'Api' || !campaign.one_off?
-    raise 'Completed Campaign' if campaign.completed?
+    raise "Campaign #{campaign.id} must be a one-off campaign with an API inbox" if campaign.inbox.inbox_type != 'Api' || !campaign.one_off?
+    raise 'Cannot execute a campaign that has already been completed' if campaign.completed?
 
     audience_label_ids = campaign.audience.select { |audience| audience['type'] == 'Label' }.pluck('id')
     audience_labels = campaign.account.labels.where(id: audience_label_ids).pluck(:title)
@@ -40,10 +40,17 @@ class Api::OneoffCampaignService
       return
     end
 
-    content = Liquid::CampaignTemplateService.new(campaign: campaign, contact: contact).call(campaign.message)
+    content = render_message(contact)
     create_conversation_with_message(contact_inbox, content)
   rescue StandardError => e
     Rails.logger.error "[API Campaign #{campaign.id}] Failed to process contact #{contact.id}: #{e.message}"
+  end
+
+  def render_message(contact)
+    Liquid::CampaignTemplateService.new(campaign: campaign, contact: contact).call(campaign.message)
+  rescue StandardError => e
+    Rails.logger.error "[API Campaign #{campaign.id}] Liquid template error for contact #{contact.id}: #{e.message}"
+    campaign.message
   end
 
   def create_conversation_with_message(contact_inbox, content)

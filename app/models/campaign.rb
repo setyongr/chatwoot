@@ -3,7 +3,7 @@
 # Table name: campaigns
 #
 #  id                                 :bigint           not null, primary key
-#  additional_attributes                :jsonb            default({})
+#  additional_attributes              :jsonb            default({})
 #  audience                           :jsonb
 #  campaign_status                    :integer          default("active"), not null
 #  campaign_type                      :integer          default("ongoing"), not null
