@@ -104,6 +104,10 @@ export const actions = {
       commit(types.SET_CAMPAIGN_UI_FLAG, { isDeleting: false });
     }
   },
+  fetchCampaignReport: async (_, id) => {
+    const response = await CampaignsAPI.getReport(id);
+    return response.data;
+  },
 };
 
 export const mutations = {

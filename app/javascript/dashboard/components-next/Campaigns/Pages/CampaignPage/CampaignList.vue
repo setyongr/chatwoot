@@ -10,12 +10,17 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  isApiType: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(['edit', 'delete']);
+const emit = defineEmits(['edit', 'delete', 'report']);
 
 const handleEdit = campaign => emit('edit', campaign);
 const handleDelete = campaign => emit('delete', campaign);
+const handleReport = campaign => emit('report', campaign);
 </script>
 
 <template>
@@ -31,8 +36,10 @@ const handleDelete = campaign => emit('delete', campaign);
       :inbox="campaign.inbox"
       :scheduled-at="campaign.scheduled_at"
       :is-live-chat-type="isLiveChatType"
+      :is-api-type="isApiType"
       @edit="handleEdit(campaign)"
       @delete="handleDelete(campaign)"
+      @report="handleReport(campaign)"
     />
   </div>
 </template>

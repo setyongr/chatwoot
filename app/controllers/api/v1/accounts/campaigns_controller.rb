@@ -8,6 +8,19 @@ class Api::V1::Accounts::CampaignsController < Api::V1::Accounts::BaseController
 
   def show; end
 
+  def report
+    conversations = Conversation.where(campaign_id: @campaign.id)
+    messages = Message.where("additional_attributes->>'campaign_id' = ?", @campaign.id.to_s)
+
+    render json: {
+      total_contacts: conversations.count,
+      messages_sent: messages.count,
+      messages_failed: @campaign.failed_count,
+      status: @campaign.campaign_status,
+      scheduled_at: @campaign.scheduled_at
+    }
+  end
+
   def create
     @campaign = Current.account.campaigns.create!(campaign_params)
   end

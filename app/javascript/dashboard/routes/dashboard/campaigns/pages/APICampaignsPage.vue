@@ -8,6 +8,7 @@ import Spinner from 'dashboard/components-next/spinner/Spinner.vue';
 import CampaignLayout from 'dashboard/components-next/Campaigns/CampaignLayout.vue';
 import CampaignList from 'dashboard/components-next/Campaigns/Pages/CampaignPage/CampaignList.vue';
 import APICampaignDialog from 'dashboard/components-next/Campaigns/Pages/CampaignPage/APICampaign/APICampaignDialog.vue';
+import APICampaignReportDialog from 'dashboard/components-next/Campaigns/Pages/CampaignPage/APICampaign/APICampaignReportDialog.vue';
 import ConfirmDeleteCampaignDialog from 'dashboard/components-next/Campaigns/Pages/CampaignPage/ConfirmDeleteCampaignDialog.vue';
 import APICampaignEmptyState from 'dashboard/components-next/Campaigns/EmptyState/APICampaignEmptyState.vue';
 
@@ -21,6 +22,7 @@ const uiFlags = useMapGetter('campaigns/getUIFlags');
 const isFetchingCampaigns = computed(() => uiFlags.value.isFetching);
 
 const confirmDeleteCampaignDialogRef = ref(null);
+const reportDialogRef = ref(null);
 
 const APICampaigns = computed(() => getters['campaigns/getAPICampaigns'].value);
 
@@ -31,6 +33,11 @@ const hasNoAPICampaigns = computed(
 const handleDelete = campaign => {
   selectedCampaign.value = campaign;
   confirmDeleteCampaignDialogRef.value.dialogRef.open();
+};
+
+const handleReport = campaign => {
+  selectedCampaign.value = campaign;
+  reportDialogRef.value?.open();
 };
 </script>
 
@@ -56,7 +63,9 @@ const handleDelete = campaign => {
     <CampaignList
       v-else-if="!hasNoAPICampaigns"
       :campaigns="APICampaigns"
+      :is-api-type="true"
       @delete="handleDelete"
+      @report="handleReport"
     />
     <APICampaignEmptyState
       v-else
@@ -67,6 +76,10 @@ const handleDelete = campaign => {
     <ConfirmDeleteCampaignDialog
       ref="confirmDeleteCampaignDialogRef"
       :selected-campaign="selectedCampaign"
+    />
+    <APICampaignReportDialog
+      ref="reportDialogRef"
+      :campaign="selectedCampaign"
     />
   </CampaignLayout>
 </template>

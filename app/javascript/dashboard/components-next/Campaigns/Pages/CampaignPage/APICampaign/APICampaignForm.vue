@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
@@ -114,6 +114,52 @@ const handleSubmit = async () => {
   resetState();
   handleCancel();
 };
+
+// Template variable chips
+const TEMPLATE_VARIABLES = [
+  { label: '{{contact.name}}', value: '{{contact.name}}' },
+  { label: '{{contact.first_name}}', value: '{{contact.first_name}}' },
+  { label: '{{contact.last_name}}', value: '{{contact.last_name}}' },
+  { label: '{{contact.email}}', value: '{{contact.email}}' },
+  { label: '{{contact.phone_number}}', value: '{{contact.phone_number}}' },
+];
+
+const messageTextareaRef = ref(null);
+
+const insertVariable = variable => {
+  const textarea = messageTextareaRef.value?.$el?.querySelector('textarea');
+  if (!textarea) {
+    state.message += variable;
+    return;
+  }
+  const start = textarea.selectionStart ?? state.message.length;
+  const end = textarea.selectionEnd ?? state.message.length;
+  state.message =
+    state.message.slice(0, start) + variable + state.message.slice(end);
+  // Restore focus and move cursor after inserted variable
+  textarea.focus();
+  const newPos = start + variable.length;
+  textarea.setSelectionRange(newPos, newPos);
+};
+
+// Live preview
+const showPreview = ref(false);
+
+const PREVIEW_CONTACT = {
+  '{{contact.name}}': 'John Doe',
+  '{{contact.first_name}}': 'John',
+  '{{contact.last_name}}': 'Doe',
+  '{{contact.email}}': 'john@example.com',
+  '{{contact.phone_number}}': '+1 555-0100',
+};
+
+const previewMessage = computed(() => {
+  if (!state.message) return '';
+  return state.message.replace(
+    /\{\{contact\.(name|first_name|last_name|email|phone_number)\}\}/g,
+    (match) => PREVIEW_CONTACT[match] || match
+  );
+});
 </script>
 
 <template>
@@ -126,14 +172,54 @@ const handleSubmit = async () => {
       :message-type="formErrors.title ? 'error' : 'info'"
     />
 
-    <TextArea
-      v-model="state.message"
-      :label="t('CAMPAIGN.API_CHANNEL.CREATE.FORM.MESSAGE.LABEL')"
-      :placeholder="t('CAMPAIGN.API_CHANNEL.CREATE.FORM.MESSAGE.PLACEHOLDER')"
-      show-character-count
-      :message="formErrors.message"
-      :message-type="formErrors.message ? 'error' : 'info'"
-    />
+    <div class="flex flex-col gap-2">
+      <TextArea
+        ref="messageTextareaRef"
+        v-model="state.message"
+        :label="t('CAMPAIGN.API_CHANNEL.CREATE.FORM.MESSAGE.LABEL')"
+        :placeholder="t('CAMPAIGN.API_CHANNEL.CREATE.FORM.MESSAGE.PLACEHOLDER')"
+        show-character-count
+        :message="formErrors.message"
+        :message-type="formErrors.message ? 'error' : 'info'"
+      />
+
+      <div class="flex flex-col gap-1.5">
+        <p class="mb-0 text-xs font-medium text-n-slate-10">
+          {{ t('CAMPAIGN.API_CHANNEL.CREATE.FORM.TEMPLATE_VARIABLES.LABEL') }}
+        </p>
+        <div class="flex flex-wrap gap-1.5">
+          <button
+            v-for="variable in TEMPLATE_VARIABLES"
+            :key="variable.value"
+            type="button"
+            class="inline-flex items-center h-6 px-2 py-0.5 text-xs font-medium rounded-md bg-n-alpha-2 text-n-blue-11 hover:bg-n-alpha-3 cursor-pointer border-0 transition-colors"
+            @click="insertVariable(variable.value)"
+          >
+            {{ variable.label }}
+          </button>
+        </div>
+      </div>
+
+      <div v-if="state.message" class="flex flex-col gap-1.5">
+        <button
+          type="button"
+          class="flex items-center gap-1 text-xs font-medium text-n-slate-10 hover:text-n-slate-12 transition-colors border-0 bg-transparent cursor-pointer p-0 w-fit"
+          @click="showPreview = !showPreview"
+        >
+          <span
+            class="i-lucide-chevron-right size-3 transition-transform"
+            :class="{ 'rotate-90': showPreview }"
+          />
+          {{ t('CAMPAIGN.API_CHANNEL.CREATE.FORM.TEMPLATE_VARIABLES.PREVIEW_LABEL') }}
+        </button>
+        <div
+          v-if="showPreview"
+          class="p-3 text-sm rounded-lg bg-n-alpha-2 text-n-slate-11 whitespace-pre-wrap"
+        >
+          {{ previewMessage }}
+        </div>
+      </div>
+    </div>
 
     <div class="flex flex-col gap-1">
       <label for="inbox" class="mb-0.5 text-sm font-medium text-n-slate-12">

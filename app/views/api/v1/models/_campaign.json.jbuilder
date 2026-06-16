@@ -11,6 +11,7 @@ end
 json.message resource.message
 json.template_params resource.template_params
 json.campaign_status resource.campaign_status
+json.failed_count resource.failed_count
 json.enabled resource.enabled
 json.campaign_type resource.campaign_type
 if resource.campaign_type == 'one_off'

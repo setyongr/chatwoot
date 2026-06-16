@@ -78,6 +78,7 @@ class Api::OneoffCampaignService
     Messages::MessageBuilder.new(campaign.sender, conversation, message_params(content)).perform
   rescue StandardError => e
     Rails.logger.error "[API Campaign #{campaign.id}] Failed to send to contact #{contact.id}: #{e.message}"
+    campaign.increment!(:failed_count)
   end
 
   def find_or_create_conversation(contact_inbox)

@@ -206,7 +206,22 @@
           "API": {
             "SUCCESS_MESSAGE": "API campaign created successfully",
             "ERROR_MESSAGE": "There was an error. Please try again."
+          },
+          "TEMPLATE_VARIABLES": {
+            "LABEL": "Insert variable",
+            "PREVIEW_LABEL": "Preview message"
           }
+        }
+      },
+      "REPORT": {
+        "TITLE": "Campaign Report",
+        "TOTAL_CONTACTS": "Total Contacts",
+        "MESSAGES_SENT": "Messages Sent",
+        "MESSAGES_FAILED": "Messages Failed",
+        "STATUS": "Status",
+        "CLOSE": "Close",
+        "API": {
+          "ERROR_MESSAGE": "Failed to load campaign report. Please try again."
         }
       }
     },

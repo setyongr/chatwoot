@@ -22,6 +22,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isApiType: {
+    type: Boolean,
+    default: false,
+  },
   isEnabled: {
     type: Boolean,
     default: false,
@@ -44,7 +48,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['edit', 'delete']);
+const emit = defineEmits(['edit', 'delete', 'report']);
 
 const { t } = useI18n();
 
@@ -79,6 +83,12 @@ const campaignStatus = computed(() => {
 
   return t('CAMPAIGN.SMS.CARD.STATUS.SCHEDULED');
 });
+
+const showReportButton = computed(
+  () =>
+    props.isApiType &&
+    (props.status === STATUS_COMPLETED || props.status === STATUS_PROCESSING)
+);
 
 const inboxName = computed(() => props.inbox?.name || '');
 
@@ -123,7 +133,7 @@ const inboxIcon = computed(() => {
         />
       </div>
     </div>
-    <div class="flex items-center justify-end w-20 gap-2">
+    <div class="flex items-center justify-end w-24 gap-2">
       <Button
         v-if="isLiveChatType"
         variant="faded"
@@ -131,6 +141,14 @@ const inboxIcon = computed(() => {
         color="slate"
         icon="i-lucide-sliders-vertical"
         @click="emit('edit')"
+      />
+      <Button
+        v-if="showReportButton"
+        variant="faded"
+        size="sm"
+        color="slate"
+        icon="i-lucide-bar-chart-2"
+        @click="emit('report')"
       />
       <Button
         variant="faded"
