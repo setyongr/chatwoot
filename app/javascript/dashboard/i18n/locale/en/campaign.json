@@ -233,7 +233,7 @@
           },
           "MESSAGE": {
             "LABEL": "Message",
-            "PLACEHOLDER": "Hi {{contact.first_name}}, check this out!",
+            "PLACEHOLDER": "Hi {{ contact.first_name }}, check this out!",
             "ERROR": "Message is required"
           },
           "INBOX": {
