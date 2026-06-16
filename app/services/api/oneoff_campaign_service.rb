@@ -19,13 +19,18 @@ class Api::OneoffCampaignService
     campaign.additional_attributes&.fetch('message_delay', 0).to_f
   end
 
+  def sleep_duration
+    base = message_delay
+    base + rand(0.0..base)
+  end
+
   def process_audience(audience_labels)
     contacts = campaign.account.contacts.tagged_with(audience_labels, any: true)
     Rails.logger.info "Processing #{contacts.count} contacts for API campaign #{campaign.id}"
 
     contacts.find_each(batch_size: 100) do |contact|
       process_contact(contact)
-      sleep(message_delay) if message_delay.positive?
+      sleep(sleep_duration) if message_delay.positive?
     end
 
     Rails.logger.info "API campaign #{campaign.id} processing completed"
